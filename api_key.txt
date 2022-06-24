@@ -1,0 +1,4 @@
+
+Usage:
+$ export API_KEY=value
+$ export API_KEY=pk_3d9fca1dad96427a93faba136cecae76

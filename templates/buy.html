@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+    <form action="/buy" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="symbol" name="symbol" placeholder="Stock Symbol" type="text">
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="shares" name="shares" placeholder="Shares" type="number" min="0">
+        </div>
+
+        <!-- <div class="mb-3">
+            <button type="button" class="btn btn-secondary" disabled>Cost: $<span>0</span></button>
+        </div> -->
+        <button class="btn btn-primary" type="submit">Buy</button>
+    </form>
+{% endblock %}
+
+{% block script %}
+<!-- <script>
+
+    const token = 'https://iexcloud.io/';
+    fetch('https://cloud.iexapis.com/', {
+        headers: {
+            Authorization: `token ${token}`
+        }
+    })
+        .then(res => res.json())
+        .then(json => console.log(json));
+
+    // let input = document.querySelector('#symbol');
+    // input.addEventListener('input', async function () {
+    //     let response = await fetch('/search?q=' + input.value);
+    //     let shows = await response.json();
+    //     let html = '';
+    //     for (let id in shows) {
+    //         let title = shows[id].title.replace('<', '&lt;').replace('&', '&amp;');
+    //         html += '<li>' + title + '</li>';
+    //     }
+    //     document.querySelector('ul').innerHTML = html;
+    // });
+
+</script> -->
+{% endblock %}

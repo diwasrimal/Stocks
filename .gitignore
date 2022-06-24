@@ -1,0 +1,5 @@
+venv/
+flask_session/
+finance.db
+test.py
+test.sql

@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile 
+{% endblock %}
+
+{% block main %}
+
+<section class="h-100 gradient-custom-2">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-9 col-xl-7">
+        <div class="card">
+          <div class="rounded-top text-white d-flex flex-row" style="height:200px;">
+            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+              <img src="../static/profile.jpg"
+                alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                style="width: 150px; z-index: 1">
+              <button type="button" class="btn btn-primary" data-mdb-ripple-color="dark"
+                style="z-index: 1;" id="editor">
+                Edit profile
+              </button>
+            </div>
+            <div class="ms-3" style="margin-top: 100px; color: black;">
+              <h4>{{ profile['username'] }}</h4>
+              <p>Shareholder</p>
+            </div>
+          </div>
+          <div class="p-4 text-black" style="background-color: #f8f9fa;">
+            <div class="d-flex justify-content-end text-center py-1">
+              <div>
+                <p class="mb-1 h5">{{ profile['streak'] }}</p>
+                <p class="small text-muted mb-0">Streak</p>
+              </div>
+              <div class="px-3">
+                <p class="mb-1 h5">{{ profile['purchase_count'] }}</p>
+                <p class="small text-muted mb-0">Purchases</p>
+              </div>
+              <div class="px-3">
+                <p class="mb-1 h5">{{ profile['share_count'] }}</p>
+                <p class="small text-muted mb-0">Shares Owned</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4 text-black" id="editorDiv" style="display: none;">
+            <h5>Edit Profile</h5>
+            <button type="button" class="btn btn-primary my-2" data-mdb-ripple-color="dark"style="z-index: 1;" id="changeUsername">
+              Change Username
+            </button><br>
+            <button type="button" class="btn btn-primary my-2" data-mdb-ripple-color="dark"style="z-index: 1;" id="changePassword">
+              Change Password
+            </button>
+          </div>
+          <!-- Change Username -->
+          <div class="card-body p-4 text-black" id="usernameDiv" style="display: none;">
+            <form action="/profile" method="post">
+              <div class="mb-3">
+                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="new_username" placeholder="New Username" type="text">
+              </div>
+              <button class="btn btn-primary" type="submit">Change</button><br>
+              <!-- A hidden input field to parse change request -->
+              <input name="option" value="username" class="hidden-change-option">
+            </form>
+
+          </div>
+          <!-- Change Password -->
+          <div class="card-body p-4 my-4 text-black" id="passwordDiv" style="display: none;">
+            <form action="/profile" method="post">
+              <div class="mb-3">
+                <input class="form-control mx-auto my-2 w-auto" id="password" name="curr_pass" placeholder="Password" type="password">
+                <input class="form-control mx-auto my-2 w-auto" id="password" name="new_pass" placeholder="New Password" type="password">
+                <input class="form-control mx-auto my-2 w-auto" id="confirmation" name="confirmation" placeholder="Confirm Password" type="password">
+              </div>
+              <button class="btn btn-primary" type="submit">Change</button>
+              <input name="option" value="password" class="hidden-change-option">
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+
+    function alterDisplay (elem) {
+      if (elem.style.display == 'none') {
+        elem.style.display = 'block'
+      }
+      else {
+        elem.style.display = 'none'
+      }
+    }
+
+    function alterVisibility (elem) {
+      if (elem.style.visibility == 'hidden') {
+        elem.style.visibility = 'visible'
+      }
+      else {
+        elem.style.visibility = 'hidden'
+      }
+    }
+
+    document.querySelector('#editor').addEventListener('click', () => {
+      alterDisplay(document.querySelector('#editorDiv'))
+      document.querySelector('#changeUsername').addEventListener('click', () => {
+        alterDisplay(document.querySelector("#usernameDiv"))
+        alterVisibility(document.querySelector('#changePassword'))
+      })
+
+      document.querySelector('#changePassword').addEventListener('click', () => {
+        alterDisplay(document.querySelector("#passwordDiv"))
+        alterVisibility(document.querySelector('#changeUsername'))
+      })
+    })
+
+  </script>
+
+{% endblock %}

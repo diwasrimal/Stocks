@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+
+	{% if transactions == [] %}
+		<h1>No history to show !</h1>
+	{% else %}
+
+	<table class="table table-striped">
+    	<thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Shares</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td>{{ t["symbol"] }}</td>
+                <td>{{ t["shares"] }}</td>
+                <td class="status">{{ t["status"] }}</td>
+                <td>{{ t["date"] }}</td>
+            </tr>
+            {% endfor %}
+       </tbody>
+
+    </table>
+
+	{% endif %}
+
+{% endblock %}
+
+{% block script %}
+
+	<script>
+		let status = document.querySelectorAll('.status')
+
+		status.forEach((elem) => {
+
+			if (elem.innerText == 'Purchased') {
+				elem.style.color = 'green'
+			}
+			else {
+				elem.style.color = 'red'
+			}
+		})
+
+		
+	</script>
+
+{% endblock %}

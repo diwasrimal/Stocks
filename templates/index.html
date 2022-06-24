@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="text-start">Name</th>
+                <th class="text-end">Symbol</th>
+                <th class="text-end">Shares</th>
+                <th class="text-end">Price</th>
+                <th class="text-end">Worth</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if stocks %}
+            {% for stock in stocks %}
+            <tr>
+                <td class="text-start">{{ stock["name"] }}</td>
+                <td class="text-end">{{ stock["symbol"] }}</td>
+                <td class="text-end">{{ stock["shares"] }}</td>
+                <td class="text-end">{{ stock["price"] | usd }}</td>
+                <td class="text-end">{{ stock["worth"] | usd }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+               <td class="text-start">-</td>
+               <td class="text-end">-</td>
+               <td class="text-end">-</td>
+               <td class="text-end">-</td>
+               <td class="text-end">-</td>
+           </tr>
+           {% endif %}
+       </tbody>
+
+        <tfoot>
+            <tr>
+                <td class="border-0 fw-bold text-end" colspan="4">Total Stocks</td>
+                <td class="border-0 text-end">{{ total_stock_worth | usd }}</td>
+            </tr>
+            <tr>
+                <td class="border-0 fw-bold text-end" colspan="4">Cash</th>
+                <td class="border-0 text-end">{{ cash | usd }}</td>
+            </tr>
+            <tr>
+                <td class="border-0 fw-bold text-end" colspan="4">TOTAL</th>
+                <td class="border-0 fw-bold text-end">{{ (cash + total_stock_worth) | usd }}</td>
+            </tr>
+
+
+        </tfoot>
+    </table>
+
+{% endblock %}
