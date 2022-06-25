@@ -19,7 +19,7 @@ python3 -m venv venv
 ```
 #### Windows
 ```cmd
-cd myproject
+cd stocks
 python3 -m venv venv
 ```
 ### Run Scripts
