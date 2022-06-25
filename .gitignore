@@ -3,3 +3,4 @@ flask_session/
 finance.db
 test.py
 test.sql
+api_key.txt
