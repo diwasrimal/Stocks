@@ -20,7 +20,7 @@ python3 -m venv venv
 #### Windows
 ```cmd
 cd stocks
-python3 -m venv venv
+py -3 -m venv venv
 ```
 ### Run Scripts
 
