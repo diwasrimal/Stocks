@@ -1,11 +1,10 @@
 import os
-# import requests
 import urllib.parse
 import asyncio
 import aiohttp
 import platform
 
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, session
 from functools import wraps
 
 
@@ -73,26 +72,8 @@ def lookup(symbols):
     asyncio.run(lookup_symbols(symbols))
 
     return stocks_info
-    # Contact API
-    # try:
-    #     api_key = os.environ.get("API_KEY")
-    #     response = requests.get(url)
-    #     response.raise_for_status()
-    # except requests.RequestException:
-    #     return None
 
-    # # Parse response
-    # try:
-    #     quote = response.json()
-    #     return {
-    #         "name": quote["companyName"],
-    #         "price": float(quote["latestPrice"]),
-    #         "symbol": quote["symbol"]
-    #     }
-    # except (KeyError, TypeError, ValueError):
-    #     return None
-
-
+    
 def usd(value):
     """Format value as USD."""
     return f"${value:,.2f}"
