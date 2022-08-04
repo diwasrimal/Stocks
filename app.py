@@ -42,23 +42,18 @@ def after_request(response):
 def get_stock_info(id):
 
     # Select list of stock symbols associated with user (sort according to shares)
-    stocks_list = db.execute("SELECT symbol FROM stocks WHERE user_id = ? ORDER BY shares DESC" , id)
+    stocks = db.execute("SELECT symbol FROM stocks WHERE user_id = ? ORDER BY shares DESC" , id)
+    symbols = [stock['symbol'] for stock in stocks]
 
-    stocks = []
-    for stock in stocks_list:
+    # Lookup for each symbol
+    stocks_info = lookup(symbols)
 
-        # Find stock info and add information to stocks list
-        symbol = stock["symbol"]
-        info = lookup(symbol)
-        
-        stock["shares"] = db.execute("SELECT shares FROM stocks WHERE user_id = ? AND symbol = ?", id, symbol)[0]['shares']
-        stock["name"] = info["name"]
-        stock["price"] = info["price"]
+    # Add additional info for each stock
+    for stock in stocks_info:
+        stock["shares"] = db.execute("SELECT shares FROM stocks WHERE user_id = ? AND symbol = ?", id, stock['symbol'])[0]['shares']
         stock["worth"] = stock["price"] * stock["shares"]
 
-        stocks.append(stock)
-
-    return stocks
+    return stocks_info
 
 
 def get_cash(id):
@@ -108,7 +103,7 @@ def buy():
         user_id = session["user_id"]
 
         # Ensure correct symbol is used
-        stock = lookup(symbol)
+        stock = lookup([symbol])[0]
         if not stock:
             return apology("Invalid Stock Symbol", 400)
 
@@ -241,7 +236,7 @@ def quote():
         # return f"{symbol}"
 
         # Ensure correct symbol is used
-        stock = lookup(symbol)
+        stock = lookup([symbol])[0]
         if not stock:
             return apology("Stock Symbol Not Found", 400)
 
@@ -319,7 +314,7 @@ def sell():
         rows = db.execute("SELECT symbol FROM stocks WHERE user_id = ?", user_id)
         symbols = [d['symbol'] for d in rows]
 
-        if not symbol or not symbol in symbols or not lookup(symbol):
+        if not symbol or not symbol in symbols or not lookup([symbol])[0]:
             return apology("Invalid Stock", 400)
 
         # Ensure that correct shares were being sold
@@ -337,7 +332,7 @@ def sell():
         # Ensure that user has enough shares
         curr_shares = db.execute("SELECT shares FROM stocks WHERE user_id = ? and symbol = ?", user_id, symbol)[0]["shares"]
         if curr_shares < shares_sold:
-            return apology("Not enough stocks on hand")
+            return apology("Not enough stocks")
 
         # Get the cash the buyer has
         cash = get_cash(user_id)
@@ -349,7 +344,9 @@ def sell():
              )
 
         # Increase cash
-        sale = lookup(symbol)["price"] * shares_sold
+        print(type(symbol))
+
+        sale = lookup([symbol])[0]["price"] * shares_sold
         db.execute("UPDATE users SET cash = ? WHERE id = ?", cash + sale, user_id)
 
         # Decrease shares from stock table (delete record if 0)
@@ -451,3 +448,4 @@ def profile():
     return render_template("profile.html", profile=profile)
 
 
+# I added something

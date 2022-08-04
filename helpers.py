@@ -1,6 +1,9 @@
 import os
-import requests
+# import requests
 import urllib.parse
+import asyncio
+import aiohttp
+import platform
 
 from flask import redirect, render_template, request, session
 from functools import wraps
@@ -36,28 +39,58 @@ def login_required(f):
     return decorated_function
 
 
-def lookup(symbol):
+def lookup(symbols):
     """Look up quote for symbol."""
+    api_key = os.environ.get("API_KEY")
+    stocks_info = list()
 
+    def lookup_tasks(session, symbols):
+        tasks = []
+        for symbol in symbols:
+            url = f"https://cloud.iexapis.com/stable/stock/{urllib.parse.quote_plus(symbol)}/quote?token={api_key}"
+            tasks.append(asyncio.create_task(session.get(url)))
+
+        return tasks
+
+    async def lookup_symbols(symbols):
+        async with aiohttp.ClientSession() as session:
+            tasks = lookup_tasks(session, symbols)
+            responses = await asyncio.gather(*tasks)
+
+            for response in responses:
+                quote = await response.json()
+                symbol = quote['symbol']
+
+                stocks_info.append({
+                    "name": quote["companyName"],
+                    "price": float(quote["latestPrice"]),
+                    "symbol": symbol
+                })
+
+    # Run coroutine at once
+    if platform.system()=='Windows':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(lookup_symbols(symbols))
+
+    return stocks_info
     # Contact API
-    try:
-        api_key = os.environ.get("API_KEY")
-        url = f"https://cloud.iexapis.com/stable/stock/{urllib.parse.quote_plus(symbol)}/quote?token={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException:
-        return None
+    # try:
+    #     api_key = os.environ.get("API_KEY")
+    #     response = requests.get(url)
+    #     response.raise_for_status()
+    # except requests.RequestException:
+    #     return None
 
-    # Parse response
-    try:
-        quote = response.json()
-        return {
-            "name": quote["companyName"],
-            "price": float(quote["latestPrice"]),
-            "symbol": quote["symbol"]
-        }
-    except (KeyError, TypeError, ValueError):
-        return None
+    # # Parse response
+    # try:
+    #     quote = response.json()
+    #     return {
+    #         "name": quote["companyName"],
+    #         "price": float(quote["latestPrice"]),
+    #         "symbol": quote["symbol"]
+    #     }
+    # except (KeyError, TypeError, ValueError):
+    #     return None
 
 
 def usd(value):
